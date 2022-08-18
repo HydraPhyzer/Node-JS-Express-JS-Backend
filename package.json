@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "ejs": "^3.1.8",
+    "express": "^4.18.1",
+    "mongodb": "^4.8.1",
+    "nodemon": "^2.0.19"
+  },
+  "name": "web-projects",
+  "version": "1.0.0",
+  "main": "A.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {},
+  "keywords": [],
+  "description": ""
+}
