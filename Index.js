@@ -1,42 +1,48 @@
-let Mongo=require('./Mongo')
-let express=require('express')
-let App=express()
-let mongodb=require('mongodb')
-App.use(express.json())
+let mongoose = require("mongoose");
 
-App.get('/' , async(Req,Res)=>
+let Connection = mongoose.connect("mongodb://localhost:27017/App");
+let Schema = mongoose.Schema({
+  Name: String,
+  Age: Number,
+});
+
+let InsertData = async () => {
+  let Model = new mongoose.model("P1", Schema);
+  let Data = new Model({
+    Name: "Zubair Gujjar",
+    Age: 20,
+  });
+  let Res = await Data.save();
+  console.log(Res);
+};
+
+let UpdateData=async()=>
 {
-    let DB=await Mongo()
-    Res.send(await DB.find().toArray())
-})
-
-App.post('/' , async(Req,Res)=>
-{
-    let DB=await Mongo()
-    let Result=await DB.insertOne(Req.body)
-
-    Res.send(`Data Added : ${Result.acknowledged}`)
-})
-
-App.put('/:XYZ' , async(Req,Res)=>
-{
-    let DB=await Mongo()
-    let Result=await DB.updateOne(
+    let Model=new mongoose.model("P1" , Schema)
+    let Data=await Model.updateOne(
         {
-            Name:Req.params.XYZ
+            Name:"Zubair Gujjar"
         },
         {
-            $set:Req.body
+            $set:{
+                Name:"Muhammad Zubair"
+            }
         }
     )
-    Res.send(`Data Update : ${Result.acknowledged}`)
-})
-
-App.delete('/:XYZ' , async(Req,Res)=>
+}
+let DeleteData=async()=>
 {
-    let DB=await Mongo()
-    let Result=await DB.deleteOne({_id:new mongodb.ObjectId(Req.params.XYZ)})
-    Res.send(`Data Delete : ${Result.acknowledged}`)
-})
+    let Model = new mongoose.model("P1" , Schema)
+    let Data=await Model.deleteOne({Name:"Muhammad Zubair"})
+}
 
-App.listen(3000)
+let ReadData=async ()=>
+{
+    let Model = new mongoose.model("P1" , Schema)
+    let Data=await Model.find();
+    console.log(Data)
+}
+// InsertData();
+// UpdateData()
+// DeleteData()
+// ReadData()
