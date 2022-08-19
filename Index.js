@@ -1,48 +1,63 @@
-let mongoose = require("mongoose");
+let express = require("express");
+const mongoose = require("mongoose");
+require("./Mongo");
+let Model = require("./Schema");
+let App = express();
 
-let Connection = mongoose.connect("mongodb://localhost:27017/App");
-let Schema = mongoose.Schema({
-  Name: String,
-  Age: Number,
+App.use(express.json())
+
+App.post('/post', async (Req, Res) => {
+  let Data = new Model(Req.body);
+  let Result=await Data.save()
+  Res.send(Result);
 });
-
-let InsertData = async () => {
-  let Model = new mongoose.model("P1", Schema);
-  let Data = new Model({
-    Name: "Zubair Gujjar",
-    Age: 20,
-  });
-  let Res = await Data.save();
-  console.log(Res);
-};
-
-let UpdateData=async()=>
+App.get('/get' , async(Req,Res)=>
 {
-    let Model=new mongoose.model("P1" , Schema)
+    let Result=await Model.find();
+    Res.send(Result)
+})
+
+App.put('/put/:_id' , async (Req,Res)=>
+{
     let Data=await Model.updateOne(
+        Req.params , 
         {
-            Name:"Zubair Gujjar"
-        },
-        {
-            $set:{
-                Name:"Muhammad Zubair"
-            }
+            $set:Req.body
         }
     )
-}
-let DeleteData=async()=>
-{
-    let Model = new mongoose.model("P1" , Schema)
-    let Data=await Model.deleteOne({Name:"Muhammad Zubair"})
-}
+    Res.send(Data)
+})
 
-let ReadData=async ()=>
+App.delete('/delete/:_id' , async (Req,Res)=>
 {
-    let Model = new mongoose.model("P1" , Schema)
-    let Data=await Model.find();
-    console.log(Data)
-}
-// InsertData();
-// UpdateData()
-// DeleteData()
-// ReadData()
+    let Result=await Model.deleteOne(Req.params)
+    Res.send(Result)
+})
+
+App.get('/search/name/:key' , async (Req,Res)=>
+{   
+    let Data=await Model.find(
+        {
+            "$or":
+            [
+                {"Name":{$regex:Req.params.key}},
+            ]
+        }
+    )
+    Res.send(Data)
+})
+App.get('/search' , async (Req,Res)=>
+{   
+    let Data=await Model.find(
+        {
+            "$or":
+            [
+                // {"Age":{$regex:Req.params.key}},
+            ]
+        }
+    )
+    // console.log(Req.query)
+    // Res.send(Data)
+})
+
+App.listen(3000)
